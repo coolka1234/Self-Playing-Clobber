@@ -1,4 +1,4 @@
-
+import numpy as np
 from game_state import ClobberGameState
 
 class DecisionTree:
@@ -31,3 +31,85 @@ class DecisionTree:
             tree[move] = self._build_tree(new_game_state, depth + 1)
 
         return tree
+    
+    def get_best_move(self, game_state: ClobberGameState, heuristic):
+        """
+        Get the best move for the current player using the heuristic.
+        """
+        best_move = None
+        best_value = float('-inf')
+
+        possible_moves = game_state.get_possible_moves()
+
+        for move in possible_moves:
+            new_game_state = game_state.make_move(move)
+            value = heuristic(new_game_state)
+
+            if value > best_value:
+                best_value = value
+                best_move = move
+
+        return best_move
+    
+    def minimax_search(self, game_state: ClobberGameState, depth, maximizing_player):
+        """
+        Perform a minimax search on the game state.
+        """
+        if depth == 0 or game_state.is_game_over():
+            return self.evaluate(game_state)
+
+        possible_moves = game_state.get_possible_moves()
+
+        if maximizing_player:
+            max_eval = float('-inf')
+            for move in possible_moves:
+                new_game_state = game_state.make_move(move)
+                eval = self.minimax_search(new_game_state, depth - 1, False)
+                max_eval = max(max_eval, eval)
+            return max_eval
+        else:
+            min_eval = float('inf')
+            for move in possible_moves:
+                new_game_state = game_state.make_move(move)
+                eval = self.minimax_search(new_game_state, depth - 1, True)
+                min_eval = min(min_eval, eval)
+            return min_eval
+    
+    def evaluate(self, game_state: ClobberGameState):
+        """
+        Evaluate the game state.
+        """
+        white_pieces = np.sum(game_state.board == 'W')
+        black_pieces = np.sum(game_state.board == 'B')
+
+        return white_pieces - black_pieces
+    
+    def alfa_beta_search(self, game_state: ClobberGameState, depth, alpha, beta, maximizing_player):
+        """
+        Perform an alpha-beta search on the game state.
+        """
+        if depth == 0 or game_state.is_game_over():
+            return self.evaluate(game_state)
+
+        possible_moves = game_state.get_possible_moves()
+
+        if maximizing_player:
+            max_eval = float('-inf')
+            for move in possible_moves:
+                new_game_state = game_state.make_move(move)
+                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, False)
+                max_eval = max(max_eval, eval)
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    break
+            return max_eval
+        else:
+            min_eval = float('inf')
+            for move in possible_moves:
+                new_game_state = game_state.make_move(move)
+                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, True)
+                min_eval = min(min_eval, eval)
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    break
+            return min_eval    
