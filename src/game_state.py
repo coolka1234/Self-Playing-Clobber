@@ -35,7 +35,7 @@ class ClobberGameState:
         """
         (start_r, start_c), (end_r, end_c) = move
         self.board[end_r, end_c] = self.current_player
-        self.board[start_r, start_c] = 'B'
+        self.board[start_r, start_c] = '_'
         self.current_player = 'B' if self.current_player == 'W' else 'W'
     
     def is_game_over(self):
