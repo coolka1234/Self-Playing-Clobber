@@ -1,36 +1,36 @@
 from game_state import ClobberGameState
 
 
-def evaluate(board, player):
+def evaluate(game_state : ClobberGameState, player):
     opponent = 'B' if player == 'W' else 'W'
     
     def is_isolated(x, y):
         for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
             nx, ny = x + dx, y + dy
-            if 0 <= nx < len(board) and 0 <= ny < len(board[0]):
-                if board[nx][ny] in ('B', 'W'):
+            if 0 <= nx < len(game_state.board) and 0 <= ny < len(game_state.board[0]):
+                if game_state.board[nx][ny] in ('B', 'W'):
                     return False
         return True
 
     my_pieces = opp_pieces = my_moves = opp_moves = my_isolated = opp_isolated = 0
-    for x in range(len(board)):
-        for y in range(len(board[0])):
-            piece = board[x][y]
+    for x in range(len(game_state.board)):
+        for y in range(len(game_state.board[0])):
+            piece = game_state.board[x][y]
             if piece == player:
                 my_pieces += 1
                 if is_isolated(x, y): my_isolated += 1
                 for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
                     nx, ny = x + dx, y + dy
-                    if 0 <= nx < len(board) and 0 <= ny < len(board[0]):
-                        if board[nx][ny] == opponent:
+                    if 0 <= nx < len(game_state.board) and 0 <= ny < len(game_state.board[0]):
+                        if game_state.board[nx][ny] == opponent:
                             my_moves += 1
             elif piece == opponent:
                 opp_pieces += 1
                 if is_isolated(x, y): opp_isolated += 1
                 for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
                     nx, ny = x + dx, y + dy
-                    if 0 <= nx < len(board) and 0 <= ny < len(board[0]):
-                        if board[nx][ny] == player:
+                    if 0 <= nx < len(game_state.board) and 0 <= ny < len(game_state.board[0]):
+                        if game_state.board[nx][ny] == player:
                             opp_moves += 1
 
     score = (

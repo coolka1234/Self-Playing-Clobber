@@ -1,7 +1,7 @@
 import numpy as np
 
 class ClobberGameState:
-    def __inti__(self, rows, cols):
+    def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
         self.board = self.create_clobber_board(rows, cols)
@@ -37,6 +37,7 @@ class ClobberGameState:
         self.board[end_r, end_c] = self.current_player
         self.board[start_r, start_c] = '_'
         self.current_player = 'B' if self.current_player == 'W' else 'W'
+        return self
     
     def is_game_over(self):
         """
@@ -44,17 +45,17 @@ class ClobberGameState:
         """
         return self.get_possible_moves() == []
     
-    def check_winner(self, board):
+    def check_winner(self):
         if self.is_game_over():
             def has_moves(player):
                 opponent = 'B' if player == 'W' else 'W'
-                for x in range(len(board)):
-                    for y in range(len(board[0])):
-                        if board[x][y] == player:
+                for x in range(len(self.board)):
+                    for y in range(len(self.board[0])):
+                        if self.board[x][y] == player:
                             for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
                                 nx, ny = x + dx, y + dy
-                                if 0 <= nx < len(board) and 0 <= ny < len(board[0]):
-                                    if board[nx][ny] == opponent:
+                                if 0 <= nx < len(self.board) and 0 <= ny < len(self.board[0]):
+                                    if self.board[nx][ny] == opponent:
                                         return True
                 return False
 

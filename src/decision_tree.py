@@ -2,7 +2,7 @@ import numpy as np
 from game_state import ClobberGameState
 from heuristics import evaluate, mobility_score, piece_count_score, isolation_score
 class DecisionTree:
-    def __init__(self, max_depth, game_state: ClobberGameState, heuristic, strategy='minmax'):
+    def __init__(self, max_depth, game_state: ClobberGameState, heuristic, strategy='minmax', player=None):
         """
         Initialize the decision tree with the game state and strategy.
         """
@@ -10,6 +10,7 @@ class DecisionTree:
         self.tree = self.crate_tree(game_state)
         self.strategy = strategy
         self.heuristic = heuristic
+        self.player = player
 
 
     def crate_tree(self, game_state):
@@ -42,27 +43,31 @@ class DecisionTree:
         """
         Get the best move for the current player using the heuristic.
         """
-        best_move = None
-        best_value = float('-inf')
-
-        possible_moves = game_state.get_possible_moves()
-
-        for move in possible_moves:
-            new_game_state = game_state.make_move(move)
-            value = self.heuristic(new_game_state)
-
-            if value > best_value:
-                best_value = value
-                best_move = move
-
-        return best_move
+        best_move_so_far = None
+        if self.strategy == 'minmax':
+            for move in game_state.get_possible_moves():
+                new_game_state = game_state.make_move(move)
+                move_value = self.minimax_search(new_game_state, self.max_depth, True)
+                if best_move_so_far is None or move_value > best_move_so_far[1]:
+                    best_move_so_far = (move, move_value)
+        elif self.strategy == 'alpha-beta':
+            best_move_so_far = (None, float('-inf'))
+            for move in game_state.get_possible_moves():
+                new_game_state = game_state.make_move(move)
+                move_value = self.alfa_beta_search(new_game_state, self.max_depth, float('-inf'), float('inf'), True)
+                if move_value > best_move_so_far[1]:
+                    best_move_so_far = (move, move_value)
+        return best_move_so_far[0] if best_move_so_far else None
     
     def minimax_search(self, game_state: ClobberGameState, depth, maximizing_player):
         """
         Perform a minimax search on the game state.
+        game_state: ClobberGameState
+        depth: Depth of the search
+        maximizing_player: Boolean indicating if it's the maximizing player's turn        
         """
         if depth == 0 or game_state.is_game_over():
-            return self.heuristic(game_state)
+            return self.heuristic(game_state, self.player)
 
         possible_moves = game_state.get_possible_moves()
 
@@ -88,7 +93,7 @@ class DecisionTree:
         Perform an alpha-beta search on the game state.
         """
         if depth == 0 or game_state.is_game_over():
-            return self.evaluate(game_state)
+            return self.heuristic(game_state)
 
         possible_moves = game_state.get_possible_moves()
 
