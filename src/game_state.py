@@ -43,3 +43,30 @@ class ClobberGameState:
         Check if the game is over.
         """
         return self.get_possible_moves() == []
+    
+    def check_winner(self, board):
+        if self.is_game_over():
+            def has_moves(player):
+                opponent = 'B' if player == 'W' else 'W'
+                for x in range(len(board)):
+                    for y in range(len(board[0])):
+                        if board[x][y] == player:
+                            for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
+                                nx, ny = x + dx, y + dy
+                                if 0 <= nx < len(board) and 0 <= ny < len(board[0]):
+                                    if board[nx][ny] == opponent:
+                                        return True
+                return False
+
+            white_can_move = has_moves('W')
+            black_can_move = has_moves('B')
+
+            if white_can_move and not black_can_move:
+                return 'W'
+            elif black_can_move and not white_can_move:
+                return 'B'
+            # should not happen in a well-formed game
+            elif not white_can_move and not black_can_move:
+                return 'Draw'
+            else:
+                return None 

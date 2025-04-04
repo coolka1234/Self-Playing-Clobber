@@ -1,10 +1,16 @@
 import numpy as np
 from game_state import ClobberGameState
-
+from heuristics import evaluate, mobility_score, piece_count_score, isolation_score
 class DecisionTree:
-    def __init__(self, max_depth, game_state: ClobberGameState):
+    def __init__(self, max_depth, game_state: ClobberGameState, heuristic, strategy='minmax'):
+        """
+        Initialize the decision tree with the game state and strategy.
+        """
         self.max_depth = max_depth
         self.tree = self.crate_tree(game_state)
+        self.strategy = strategy
+        self.heuristic = heuristic
+
 
     def crate_tree(self, game_state):
         """
@@ -21,7 +27,7 @@ class DecisionTree:
             return None
 
         if game_state.is_game_over():
-            return game_state.get_winner()
+            return game_state.check_winner()
 
         possible_moves = game_state.get_possible_moves()
 
@@ -32,7 +38,7 @@ class DecisionTree:
 
         return tree
     
-    def get_best_move(self, game_state: ClobberGameState, heuristic):
+    def get_best_move(self, game_state: ClobberGameState):
         """
         Get the best move for the current player using the heuristic.
         """
@@ -43,7 +49,7 @@ class DecisionTree:
 
         for move in possible_moves:
             new_game_state = game_state.make_move(move)
-            value = heuristic(new_game_state)
+            value = self.heuristic(new_game_state)
 
             if value > best_value:
                 best_value = value
@@ -56,7 +62,7 @@ class DecisionTree:
         Perform a minimax search on the game state.
         """
         if depth == 0 or game_state.is_game_over():
-            return self.evaluate(game_state)
+            return self.heuristic(game_state)
 
         possible_moves = game_state.get_possible_moves()
 
@@ -75,14 +81,7 @@ class DecisionTree:
                 min_eval = min(min_eval, eval)
             return min_eval
     
-    def evaluate(self, game_state: ClobberGameState):
-        """
-        Evaluate the game state.
-        """
-        white_pieces = np.sum(game_state.board == 'W')
-        black_pieces = np.sum(game_state.board == 'B')
 
-        return white_pieces - black_pieces
     
     def alfa_beta_search(self, game_state: ClobberGameState, depth, alpha, beta, maximizing_player):
         """
