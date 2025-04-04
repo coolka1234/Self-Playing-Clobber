@@ -47,6 +47,7 @@ class ClobberGameState:
     
     def check_winner(self):
         if self.is_game_over():
+            print("Game Over, checking winner...")
             def has_moves(player):
                 opponent = 'B' if player == 'W' else 'W'
                 for x in range(len(self.board)):
