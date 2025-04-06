@@ -20,7 +20,7 @@ class ClobberAgent:
         print(f"Possible moves: {game.get_possible_moves()}")
         print(f"Evaluating moves using {self.strategy} strategy...")
         dt=DecisionTree(self.max_depth, copy.deepcopy(game), self.heuristic, self.strategy, self.name)
-        best_move = dt.get_best_move(game)
+        best_move = dt.get_best_move(copy.deepcopy(game))
         if best_move:
             game.make_move(best_move)
             print(f"{self.name} played move {best_move}")
@@ -29,6 +29,7 @@ class ClobberAgent:
         winner = game.check_winner()
         if winner:
             print(f"Winner: {winner}")
+            print(f"Final board:\n{game.board}")
             return None
         else:
             print("No winner yet.")

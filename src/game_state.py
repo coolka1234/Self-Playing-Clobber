@@ -25,7 +25,7 @@ class ClobberGameState:
                     for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                         new_r, new_c = r + dr, c + dc
                         if 0 <= new_r < self.rows and 0 <= new_c < self.cols:
-                            if self.board[new_r, new_c] == 'B':
+                            if self.board[new_r, new_c] != self.current_player and self.board[new_r, new_c] != '_':
                                 moves.append(((r, c), (new_r, new_c)))
         return moves
     
@@ -47,28 +47,32 @@ class ClobberGameState:
     
     def check_winner(self):
         if self.is_game_over():
-            print("Game Over, checking winner...")
-            def has_moves(player):
-                opponent = 'B' if player == 'W' else 'W'
-                for x in range(len(self.board)):
-                    for y in range(len(self.board[0])):
-                        if self.board[x][y] == player:
-                            for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
-                                nx, ny = x + dx, y + dy
-                                if 0 <= nx < len(self.board) and 0 <= ny < len(self.board[0]):
-                                    if self.board[nx][ny] == opponent:
-                                        return True
-                return False
+            # def has_moves(player):
+            #     opponent = 'B' if player == 'W' else 'W'
+            #     for x in range(len(self.board)):
+            #         for y in range(len(self.board[0])):
+            #             if self.board[x][y] == player:
+            #                 for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
+            #                     nx, ny = x + dx, y + dy
+            #                     if 0 <= nx < len(self.board) and 0 <= ny < len(self.board[0]):
+            #                         if self.board[nx][ny] == opponent:
+            #                             return True
+            #     return False
 
-            white_can_move = has_moves('W')
-            black_can_move = has_moves('B')
+            # white_can_move = has_moves('W')
+            # black_can_move = has_moves('B')
 
-            if white_can_move and not black_can_move:
-                return 'W'
-            elif black_can_move and not white_can_move:
+            # if white_can_move and not black_can_move:
+            #     return 'W'
+            # elif black_can_move and not white_can_move:
+            #     return 'B'
+            # # should not happen in a well-formed game
+            # elif not white_can_move and not black_can_move:
+            #     return 'Draw'
+            # else:
+            #     return None 
+            if self.current_player == 'W':
                 return 'B'
-            # should not happen in a well-formed game
-            elif not white_can_move and not black_can_move:
-                return 'Draw'
             else:
-                return None 
+                return 'W'
+        return None
