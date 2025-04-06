@@ -40,8 +40,8 @@ def play_and_listen(heuristic, strategy, max_depth, initial_game_state):
             break
 
 if __name__ == "__main__":
-    rows = 5
-    cols = 6
+    rows = 11
+    cols = 7
     heuristic_W = isolation_score
     # alpha-beta or minmax
     strategy_A = 'alpha-beta'

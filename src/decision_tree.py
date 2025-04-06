@@ -12,6 +12,7 @@ class DecisionTree:
         self.strategy = strategy
         self.heuristic = heuristic
         self.player = player
+        self.num_of_visits = 0
 
 
     def crate_tree(self, game_state):
@@ -75,6 +76,7 @@ class DecisionTree:
         if maximizing_player:
             max_eval = float('-inf')
             for move in possible_moves:
+                self.num_of_visits += 1
                 new_game_state = game_state.make_move(move)
                 eval = self.minimax_search(new_game_state, depth - 1, False)
                 max_eval = max(max_eval, eval)
@@ -82,6 +84,7 @@ class DecisionTree:
         else:
             min_eval = float('inf')
             for move in possible_moves:
+                self.num_of_visits += 1
                 new_game_state = game_state.make_move(move)
                 eval = self.minimax_search(new_game_state, depth - 1, True)
                 min_eval = min(min_eval, eval)
@@ -89,21 +92,22 @@ class DecisionTree:
     
 
     
-    def alfa_beta_search(self, game_state: ClobberGameState, depth, alpha, beta, maximizing_player, num_of_visits=0):
+    def alfa_beta_search(self, game_state: ClobberGameState, depth, alpha, beta, maximizing_player):
         """
         Perform an alpha-beta search on the game state.
         """
         if depth == 0 or game_state.is_game_over():
-            print(f"Num of visits: {num_of_visits}", file=sys.stderr)
             return self.heuristic(game_state, self.player)
 
         possible_moves = game_state.get_possible_moves()
 
+
         if maximizing_player:
             max_eval = float('-inf')
             for move in possible_moves:
+                self.num_of_visits += 1
                 new_game_state = game_state.make_move(move)
-                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, False, num_of_visits+1)
+                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, False)
                 max_eval = max(max_eval, eval)
                 alpha = max(alpha, eval)
                 if beta <= alpha:
@@ -112,8 +116,9 @@ class DecisionTree:
         else:
             min_eval = float('inf')
             for move in possible_moves:
+                self.num_of_visits += 1
                 new_game_state = game_state.make_move(move)
-                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, True, num_of_visits+1)
+                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, True)
                 min_eval = min(min_eval, eval)
                 beta = min(beta, eval)
                 if beta <= alpha:

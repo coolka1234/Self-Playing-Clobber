@@ -45,12 +45,12 @@ def play_and_listen(heuristic, strategy, max_depth, initial_game_state):
             break
 
 if __name__ == "__main__":
-    rows = 6
-    cols = 5
-    heuristic_W = isolation_score
+    rows = 7
+    cols = 11
+    heuristic_W = mobility_score
     # alpha-beta or minmax
-    strategy_A = 'alpha-beta'
-    max_depth_A = 10
+    strategy_A = 'minmax'
+    max_depth_A = 20
     initial_game_state = ClobberGameState(rows, cols)
 
     play_and_listen(heuristic_W,strategy_A, max_depth_A,  initial_game_state)

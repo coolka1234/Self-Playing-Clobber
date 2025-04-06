@@ -1,4 +1,5 @@
 import copy
+import sys
 from game_state import ClobberGameState
 from heuristics import evaluate
 from decision_tree import DecisionTree
@@ -25,6 +26,7 @@ class ClobberAgent:
             potential_new_heuristic = dt.analyze_and_change_heuristic(copy.deepcopy(game))
             self.heuristic= potential_new_heuristic if potential_new_heuristic else self.heuristic
         best_move = dt.get_best_move(copy.deepcopy(game))
+        print(f"Number of nodes visited: {dt.num_of_visits}", file=sys.stderr)
         if best_move:
             game.make_move(best_move)
             print(f"{self.name} played move {best_move}")
