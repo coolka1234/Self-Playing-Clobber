@@ -76,3 +76,9 @@ class ClobberGameState:
             else:
                 return 'W'
         return None
+    
+    def get_num_of_pieces(self, player):
+        """
+        Get the number of pieces for a player.
+        """
+        return np.sum(self.board == player)

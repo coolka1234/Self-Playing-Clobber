@@ -22,7 +22,8 @@ class ClobberAgent:
         print(f"Evaluating moves using {self.strategy} strategy...")
         dt=DecisionTree(self.max_depth, copy.deepcopy(game), self.heuristic, self.strategy, self.name)
         if self.adaptive:
-            dt.analyze_and_change_heuristic(copy.deepcopy(game))
+            potential_new_heuristic = dt.analyze_and_change_heuristic(copy.deepcopy(game))
+            self.heuristic= potential_new_heuristic if potential_new_heuristic else self.heuristic
         best_move = dt.get_best_move(copy.deepcopy(game))
         if best_move:
             game.make_move(best_move)

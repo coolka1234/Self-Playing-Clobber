@@ -127,7 +127,7 @@ class DecisionTree:
         piece_count = piece_count_score(game_state, self.player)
         isolation = isolation_score(game_state, self.player)
         
-        total_pieces = game_state.get_piece_count(1) + game_state.get_piece_count(2)
+        total_pieces = game_state.get_num_of_pieces('W') + game_state.get_num_of_pieces('B')
         max_pieces = game_state.cols * game_state.rows
         game_progress = 1 - (total_pieces / max_pieces)  # game progress from 0 to 1
         
@@ -174,7 +174,5 @@ class DecisionTree:
             print(f"Weighted scores: {', '.join([f'{k}={v:.2f}' for k, v in weighted_scores.items()])}")
             print(f"Changing heuristic from {old_heuristic_name} to {best_heuristic_name}")
             
-            self.heuristic = new_heuristic
-            return True
-        
-        return False
+            return new_heuristic
+        return None
