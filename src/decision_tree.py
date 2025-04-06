@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 from game_state import ClobberGameState
 from heuristics import evaluate, mobility_score, piece_count_score, isolation_score
@@ -88,11 +89,12 @@ class DecisionTree:
     
 
     
-    def alfa_beta_search(self, game_state: ClobberGameState, depth, alpha, beta, maximizing_player):
+    def alfa_beta_search(self, game_state: ClobberGameState, depth, alpha, beta, maximizing_player, num_of_visits=0):
         """
         Perform an alpha-beta search on the game state.
         """
         if depth == 0 or game_state.is_game_over():
+            print(f"Num of visits: {num_of_visits}", file=sys.stderr)
             return self.heuristic(game_state, self.player)
 
         possible_moves = game_state.get_possible_moves()
@@ -101,7 +103,7 @@ class DecisionTree:
             max_eval = float('-inf')
             for move in possible_moves:
                 new_game_state = game_state.make_move(move)
-                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, False)
+                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, False, num_of_visits+1)
                 max_eval = max(max_eval, eval)
                 alpha = max(alpha, eval)
                 if beta <= alpha:
@@ -111,7 +113,7 @@ class DecisionTree:
             min_eval = float('inf')
             for move in possible_moves:
                 new_game_state = game_state.make_move(move)
-                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, True)
+                eval = self.alfa_beta_search(new_game_state, depth - 1, alpha, beta, True, num_of_visits+1)
                 min_eval = min(min_eval, eval)
                 beta = min(beta, eval)
                 if beta <= alpha:
