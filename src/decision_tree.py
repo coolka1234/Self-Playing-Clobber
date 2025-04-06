@@ -93,7 +93,7 @@ class DecisionTree:
         Perform an alpha-beta search on the game state.
         """
         if depth == 0 or game_state.is_game_over():
-            return self.heuristic(game_state)
+            return self.heuristic(game_state, self.player)
 
         possible_moves = game_state.get_possible_moves()
 
@@ -117,3 +117,64 @@ class DecisionTree:
                 if beta <= alpha:
                     break
             return min_eval    
+    
+    def analyze_and_change_heuristic(self, game_state: ClobberGameState):
+        """
+        Analyze the game state and change the heuristic based on the analysis.
+        Choose the most appropriate heuristic based on the current game state.
+        """
+        mobility = mobility_score(game_state, self.player)
+        piece_count = piece_count_score(game_state, self.player)
+        isolation = isolation_score(game_state, self.player)
+        
+        total_pieces = game_state.get_piece_count(1) + game_state.get_piece_count(2)
+        max_pieces = game_state.cols * game_state.rows
+        game_progress = 1 - (total_pieces / max_pieces)  # game progress from 0 to 1
+        
+        epsilon = 1e-10
+        scores = {
+            "mobility": abs(mobility),
+            "piece_count": abs(piece_count),
+            "isolation": abs(isolation)
+        }
+        
+        max_score = max(scores.values()) + epsilon
+        normalized_scores = {k: v/max_score for k, v in scores.items()}
+        
+        if game_progress < 0.3:  # Early game
+            weights = {"mobility": 0.7, "piece_count": 0.2, "isolation": 0.1}
+        elif game_progress < 0.7:  # Mid game
+            weights = {"mobility": 0.4, "piece_count": 0.4, "isolation": 0.2}
+        else:  # Lategame
+            weights = {"mobility": 0.2, "piece_count": 0.3, "isolation": 0.5}
+        
+        weighted_scores = {
+            "mobility": normalized_scores["mobility"] * weights["mobility"],
+            "piece_count": normalized_scores["piece_count"] * weights["piece_count"],
+            "isolation": normalized_scores["isolation"] * weights["isolation"]
+        }
+        
+        best_heuristic_name = max(weighted_scores, key=weighted_scores.get)
+        
+        heuristic_map = {
+            "mobility": mobility_score,
+            "piece_count": piece_count_score,
+            "isolation": isolation_score
+        }
+        
+        new_heuristic = heuristic_map[best_heuristic_name]
+        
+        if self.heuristic.__code__ != new_heuristic.__code__:
+            old_heuristic_name = next((name for name, func in heuristic_map.items() 
+                                      if func.__code__ == self.heuristic.__code__), "unknown")
+            
+            print(f"Game progress: {game_progress:.2f} (Phase: {'early' if game_progress < 0.3 else 'mid' if game_progress < 0.7 else 'late'})")
+            print(f"Raw scores: Mobility={mobility:.2f}, Piece Count={piece_count:.2f}, Isolation={isolation:.2f}")
+            print(f"Normalized scores: {', '.join([f'{k}={v:.2f}' for k, v in normalized_scores.items()])}")
+            print(f"Weighted scores: {', '.join([f'{k}={v:.2f}' for k, v in weighted_scores.items()])}")
+            print(f"Changing heuristic from {old_heuristic_name} to {best_heuristic_name}")
+            
+            self.heuristic = new_heuristic
+            return True
+        
+        return False

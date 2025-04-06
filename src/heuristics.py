@@ -55,28 +55,35 @@ def mobility_score(game_state: ClobberGameState, player):
         return moves
     return count_moves(player) - count_moves(opponent)
 
-def piece_count_score(board, player):
+def piece_count_score(game_state: ClobberGameState, player):
     opponent = 'B' if player == 'W' else 'W'
-    my_count = sum(row.count(player) for row in board)
-    opp_count = sum(row.count(opponent) for row in board)
+    my_count= 0
+    opp_count= 0
+    for x in range(len(game_state.board)):
+        for y in range(len(game_state.board[0])):
+            piece = game_state.board[x][y]
+            if piece == player:
+                my_count += 1
+            elif piece == opponent:
+                opp_count += 1
     return my_count - opp_count
 
-def isolation_score(board, player):
+def isolation_score(game_state: ClobberGameState, player):
     opponent = 'B' if player == 'W' else 'W'
     
     def is_isolated(x, y):
         for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
             nx, ny = x + dx, y + dy
-            if 0 <= nx < len(board) and 0 <= ny < len(board[0]):
-                if board[nx][ny] in ('B', 'W'):
+            if 0 <= nx < len(game_state.board) and 0 <= ny < len(game_state.board[0]):
+                if game_state.board[nx][ny] in ('B', 'W'):
                     return False
         return True
 
     def count_isolated(p):
         count = 0
-        for x in range(len(board)):
-            for y in range(len(board[0])):
-                if board[x][y] == p and is_isolated(x, y):
+        for x in range(len(game_state.board)):
+            for y in range(len(game_state.board[0])):
+                if game_state.board[x][y] == p and is_isolated(x, y):
                     count += 1
         return count
 

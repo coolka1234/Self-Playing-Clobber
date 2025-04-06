@@ -24,12 +24,14 @@ def simulate_game(heuristic_W, heuristic_B, strategy_A, strategy_B, max_depth_A,
     print("Game Over")
     print(f"Total moves played: {num_of_moves}")
 
+
 if __name__ == "__main__":
     rows = 8
     cols = 8
-    heuristic_W = evaluate
-    heuristic_B = piece_count_score
-    strategy_A = 'minmax'
+    heuristic_W = isolation_score
+    heuristic_B = mobility_score
+    # alpha-beta or minmax
+    strategy_A = 'alpha-beta'
     strategy_B = 'alpha-beta'
     max_depth_A = 10
     max_depth_B = 10

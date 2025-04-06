@@ -3,12 +3,13 @@ from game_state import ClobberGameState
 from heuristics import evaluate
 from decision_tree import DecisionTree
 class ClobberAgent:
-    def __init__(self, name, initial_game_state, heuristic, strategy='minmax',max_depth=None):
+    def __init__(self, name, initial_game_state, heuristic, strategy='minmax',max_depth=None, adaptive=False):
         self.name = name
         self.game_state = initial_game_state
         self.heuristic = heuristic
         self.strategy = strategy
         self.max_depth = max_depth
+        self.adaptive = adaptive
 
     def play(self, game: ClobberGameState):
         """
@@ -20,6 +21,8 @@ class ClobberAgent:
         print(f"Possible moves: {game.get_possible_moves()}")
         print(f"Evaluating moves using {self.strategy} strategy...")
         dt=DecisionTree(self.max_depth, copy.deepcopy(game), self.heuristic, self.strategy, self.name)
+        if self.adaptive:
+            dt.analyze_and_change_heuristic(copy.deepcopy(game))
         best_move = dt.get_best_move(copy.deepcopy(game))
         if best_move:
             game.make_move(best_move)
