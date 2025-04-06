@@ -42,7 +42,7 @@ def play_and_listen(heuristic, strategy, max_depth, initial_game_state):
 if __name__ == "__main__":
     rows = 11
     cols = 7
-    heuristic_W = isolation_score
+    heuristic_W = piece_count_score
     # alpha-beta or minmax
     strategy_A = 'alpha-beta'
     max_depth_A = 10
