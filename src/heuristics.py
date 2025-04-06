@@ -40,17 +40,17 @@ def evaluate(game_state : ClobberGameState, player):
     )
     return score
 
-def mobility_score(board, player):
+def mobility_score(game_state: ClobberGameState, player):
     opponent = 'B' if player == 'W' else 'W'
     def count_moves(p):
         moves = 0
-        for x in range(len(board)):
-            for y in range(len(board[0])):
-                if board[x][y] == p:
+        for x in range(len(game_state.board)):
+            for y in range(len(game_state.board[0])):
+                if game_state.board[x][y] == p:
                     for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
                         nx, ny = x + dx, y + dy
-                        if 0 <= nx < len(board) and 0 <= ny < len(board[0]):
-                            if board[nx][ny] == ('B' if p == 'W' else 'W'):
+                        if 0 <= nx < len(game_state.board) and 0 <= ny < len(game_state.board[0]):
+                            if game_state.board[nx][ny] == ('B' if p == 'W' else 'W'):
                                 moves += 1
         return moves
     return count_moves(player) - count_moves(opponent)
