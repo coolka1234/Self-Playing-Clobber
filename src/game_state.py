@@ -14,7 +14,7 @@ class ClobberGameState:
                 board[r, c] = 'W' if (r + c) % 2 == 0 else 'B'
         return board
     
-    def get_possible_moves(self):
+    def get_possible_moves(self, print_moves=False):
         """
         Get all possible moves for the current player.
         """
@@ -27,6 +27,8 @@ class ClobberGameState:
                         if 0 <= new_r < self.rows and 0 <= new_c < self.cols:
                             if self.board[new_r, new_c] != self.current_player and self.board[new_r, new_c] != '_':
                                 moves.append(((r, c), (new_r, new_c)))
+                                if print_moves:
+                                    print("Possible move:", self.board[r, c], "to", self.board[new_r, new_c])
         return moves
     
     def make_move(self, move):
@@ -34,6 +36,12 @@ class ClobberGameState:
         Make a move on the board.
         """
         (start_r, start_c), (end_r, end_c) = move
+        # test if move is valid
+        print("Making move:", self.board[start_r, start_c], "to", self.board[end_r, end_c])
+        if self.board[start_r, start_c] != self.current_player:
+            raise ValueError("Invalid move: not the current player's piece")
+        if self.board[end_r, end_c] == self.current_player:
+            raise ValueError("Invalid move: cannot move to the same color")
         self.board[end_r, end_c] = self.current_player
         self.board[start_r, start_c] = '_'
         self.current_player = 'B' if self.current_player == 'W' else 'W'
