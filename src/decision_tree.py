@@ -33,7 +33,7 @@ class DecisionTree:
         if game_state.is_game_over():
             return game_state.check_winner()
 
-        possible_moves = game_state.get_possible_moves(print_moves=True)
+        possible_moves = game_state.get_possible_moves(print_moves=False)
 
         tree = {}
         for move in possible_moves:
@@ -81,16 +81,18 @@ class DecisionTree:
             max_eval = float('-inf')
             for move in possible_moves:
                 self.num_of_visits += 1
-                new_game_state = game_state.make_move(move)
-                eval = self.minimax_search(new_game_state, depth - 1, False)
+                copied_game_state = copy.deepcopy(game_state)
+                new_game_state = copied_game_state.make_move(move)
+                eval = self.minimax_search(copy.deepcopy(new_game_state), depth - 1, False)
                 max_eval = max(max_eval, eval)
             return max_eval
         else:
             min_eval = float('inf')
             for move in possible_moves:
                 self.num_of_visits += 1
-                new_game_state = game_state.make_move(move)
-                eval = self.minimax_search(new_game_state, depth - 1, True)
+                copied_game_state = copy.deepcopy(game_state)
+                new_game_state = copied_game_state.make_move(move)
+                eval = self.minimax_search(copy.deepcopy(new_game_state), depth - 1, True)
                 min_eval = min(min_eval, eval)
             return min_eval
     
