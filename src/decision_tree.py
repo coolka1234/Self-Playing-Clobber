@@ -50,15 +50,17 @@ class DecisionTree:
         best_move_so_far = None
         if self.strategy == 'minmax':
             for move in game_state.get_possible_moves():
-                new_game_state = game_state.make_move(move)
-                move_value = self.minimax_search(new_game_state, self.max_depth, True)
+                copied_game_state = copy.deepcopy(game_state)
+                new_game_state = copied_game_state.make_move(move)
+                move_value = self.minimax_search(copy.deepcopy(new_game_state), self.max_depth, True)
                 if best_move_so_far is None or move_value > best_move_so_far[1]:
                     best_move_so_far = (move, move_value)
         elif self.strategy == 'alpha-beta':
             best_move_so_far = (None, float('-inf'))
             for move in game_state.get_possible_moves():
-                new_game_state = game_state.make_move(move)
-                move_value = self.alfa_beta_search(new_game_state, self.max_depth, float('-inf'), float('inf'), True)
+                copied_game_state= copy.deepcopy(game_state)
+                new_game_state = copied_game_state.make_move(move)
+                move_value = self.alfa_beta_search(copy.deepcopy(new_game_state), self.max_depth, float('-inf'), float('inf'), True)
                 if move_value > best_move_so_far[1]:
                     best_move_so_far = (move, move_value)
         return best_move_so_far[0] if best_move_so_far else None
