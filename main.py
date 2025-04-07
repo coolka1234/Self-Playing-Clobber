@@ -5,7 +5,7 @@ from src.game_state import ClobberGameState
 from src.heuristics import evaluate, mobility_score, piece_count_score, isolation_score
 
 if __name__ == "__main__":
-    initial_game_state = ClobberGameState(5, 6)
+    initial_game_state = ClobberGameState(8, 8)
     agent = ClobberAgent(name="W", initial_game_state=initial_game_state, heuristic=evaluate, strategy='alpha-beta', max_depth=3)
     agent2 = ClobberAgent(name="B", initial_game_state=initial_game_state, heuristic=evaluate, strategy='alpha-beta', max_depth=3)
     num_of_moves = 1

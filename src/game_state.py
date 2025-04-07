@@ -36,8 +36,6 @@ class ClobberGameState:
         Make a move on the board.
         """
         (start_r, start_c), (end_r, end_c) = move
-        # test if move is valid
-        print("Making move:", self.board[start_r, start_c], "to", self.board[end_r, end_c])
         if self.board[start_r, start_c] != self.current_player:
             raise ValueError("Invalid move: not the current player's piece")
         if self.board[end_r, end_c] == self.current_player:

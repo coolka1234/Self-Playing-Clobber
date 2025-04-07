@@ -3,6 +3,7 @@ import sys
 import numpy as np
 from game_state import ClobberGameState
 from heuristics import evaluate, mobility_score, piece_count_score, isolation_score
+
 class DecisionTree:
     def __init__(self, max_depth, game_state: ClobberGameState, heuristic, strategy='minmax', player=None):
         """
@@ -14,7 +15,7 @@ class DecisionTree:
         self.heuristic = heuristic
         self.player = player
         self.num_of_visits = 0
-
+        self.heuristic_cache = {}  
 
     def crate_tree(self, game_state):
         """
@@ -49,18 +50,23 @@ class DecisionTree:
         """
         best_move_so_far = None
         if self.strategy == 'minmax':
+            best_move_so_far = (None, float('-inf'))
             for move in game_state.get_possible_moves():
-                copied_game_state = copy.deepcopy(game_state)
-                new_game_state = copied_game_state.make_move(move)
-                move_value = self.minimax_search(copy.deepcopy(new_game_state), self.max_depth, True)
-                if best_move_so_far is None or move_value > best_move_so_far[1]:
+                temp_game_state = copy.deepcopy(game_state)
+                temp_game_state.make_move(move)
+                
+                move_value = self.minimax_search(temp_game_state, self.max_depth - 1, False)
+                
+                if move_value > best_move_so_far[1]:
                     best_move_so_far = (move, move_value)
         elif self.strategy == 'alpha-beta':
             best_move_so_far = (None, float('-inf'))
             for move in game_state.get_possible_moves():
-                copied_game_state= copy.deepcopy(game_state)
-                new_game_state = copied_game_state.make_move(move)
-                move_value = self.alfa_beta_search(copy.deepcopy(new_game_state), self.max_depth, float('-inf'), float('inf'), True)
+                temp_game_state = copy.deepcopy(game_state)
+                temp_game_state.make_move(move)
+                
+                move_value = self.alfa_beta_search(temp_game_state, self.max_depth - 1, float('-inf'), float('inf'), False)
+                
                 if move_value > best_move_so_far[1]:
                     best_move_so_far = (move, move_value)
         return best_move_so_far[0] if best_move_so_far else None
@@ -72,67 +78,102 @@ class DecisionTree:
         depth: Depth of the search
         maximizing_player: Boolean indicating if it's the maximizing player's turn        
         """
+        state_key = (str(game_state.board), depth, maximizing_player)
+        if state_key in self.heuristic_cache:
+            return self.heuristic_cache[state_key]
+            
         if depth == 0 or game_state.is_game_over():
-            return self.heuristic(game_state, self.player)
+            result = self.heuristic(game_state, self.player)
+            self.heuristic_cache[state_key] = result
+            return result
 
         possible_moves = game_state.get_possible_moves()
+        if not possible_moves:  
+            result = self.heuristic(game_state, self.player)
+            self.heuristic_cache[state_key] = result
+            return result
 
         if maximizing_player:
             max_eval = float('-inf')
             for move in possible_moves:
                 self.num_of_visits += 1
-                copied_game_state = copy.deepcopy(game_state)
-                new_game_state = copied_game_state.make_move(move)
-                eval = self.minimax_search(copy.deepcopy(new_game_state), depth - 1, False)
-                max_eval = max(max_eval, eval)
+                
+                temp_game_state = copy.deepcopy(game_state)
+                temp_game_state.make_move(move)
+                
+                eval_value = self.minimax_search(temp_game_state, depth - 1, False)
+                max_eval = max(max_eval, eval_value)
+            
+            self.heuristic_cache[state_key] = max_eval
             return max_eval
         else:
             min_eval = float('inf')
             for move in possible_moves:
                 self.num_of_visits += 1
-                copied_game_state = copy.deepcopy(game_state)
-                new_game_state = copied_game_state.make_move(move)
-                eval = self.minimax_search(copy.deepcopy(new_game_state), depth - 1, True)
-                min_eval = min(min_eval, eval)
+                
+                temp_game_state = copy.deepcopy(game_state)
+                temp_game_state.make_move(move)
+                
+                eval_value = self.minimax_search(temp_game_state, depth - 1, True)
+                min_eval = min(min_eval, eval_value)
+            
+            self.heuristic_cache[state_key] = min_eval
             return min_eval
-    
-
     
     def alfa_beta_search(self, game_state: ClobberGameState, depth, alpha, beta, maximizing_player):
         """
         Perform an alpha-beta search on the game state.
         """
-        print(f"Alpha-Beta Search: depth={depth}, alpha={alpha}, beta={beta}, maximizing_player={maximizing_player}")
+        # Check for cached result
+        state_key = (str(game_state.board), depth, maximizing_player)
+        if state_key in self.heuristic_cache:
+            return self.heuristic_cache[state_key]
+            
         if depth == 0 or game_state.is_game_over():
-            return self.heuristic(game_state, self.player)
+            result = self.heuristic(game_state, self.player)
+            self.heuristic_cache[state_key] = result
+            return result
 
-        possible_moves = game_state.get_possible_moves(print_moves=True)
-
+        possible_moves = game_state.get_possible_moves(print_moves=False)
+        if not possible_moves:  
+            result = self.heuristic(game_state, self.player)
+            self.heuristic_cache[state_key] = result
+            return result
 
         if maximizing_player:
             max_eval = float('-inf')
             for move in possible_moves:
                 self.num_of_visits += 1
-                checked_game_state=copy.deepcopy(game_state)
-                new_game_state = checked_game_state.make_move((move))
-                eval = self.alfa_beta_search(copy.deepcopy(new_game_state), depth - 1, alpha, beta, False)
-                max_eval = max(max_eval, eval)
-                alpha = max(alpha, eval)
+                
+                temp_game_state = copy.deepcopy(game_state)
+                temp_game_state.make_move(move)
+                
+                eval_value = self.alfa_beta_search(temp_game_state, depth - 1, alpha, beta, False)
+                
+                max_eval = max(max_eval, eval_value)
+                alpha = max(alpha, eval_value)
                 if beta <= alpha:
                     break
+            
+            self.heuristic_cache[state_key] = max_eval
             return max_eval
         else:
             min_eval = float('inf')
             for move in possible_moves:
                 self.num_of_visits += 1
-                checked_game_state=copy.deepcopy(game_state)
-                new_game_state = checked_game_state.make_move(move)
-                eval = self.alfa_beta_search(copy.deepcopy(new_game_state), depth - 1, alpha, beta, True)
-                min_eval = min(min_eval, eval)
-                beta = min(beta, eval)
+                
+                temp_game_state = copy.deepcopy(game_state)
+                temp_game_state.make_move(move)
+                
+                eval_value = self.alfa_beta_search(temp_game_state, depth - 1, alpha, beta, True)
+                
+                min_eval = min(min_eval, eval_value)
+                beta = min(beta, eval_value)
                 if beta <= alpha:
                     break
-            return min_eval    
+            
+            self.heuristic_cache[state_key] = min_eval
+            return min_eval
     
     def analyze_and_change_heuristic(self, game_state: ClobberGameState):
         """
