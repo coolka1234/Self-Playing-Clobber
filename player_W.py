@@ -45,7 +45,7 @@ if __name__ == "__main__":
     heuristic_W = piece_count_score
     # alpha-beta or minmax
     strategy_A = 'alpha-beta'
-    max_depth_A = 10
+    max_depth_A = 2
     initial_game_state = ClobberGameState(rows, cols)
 
     play_and_listen(heuristic_W,strategy_A, max_depth_A,  initial_game_state)

@@ -19,7 +19,7 @@ class ClobberAgent:
         print(f"{self.name} is playing...")
         print(f"Current board:\n{game.board}")
         print(f"Current player: {game.current_player}")
-        print(f"Possible moves: {game.get_possible_moves()}")
+        # print(f"Possible moves: {game.get_possible_moves()}")
         print(f"Evaluating moves using {self.strategy} strategy...")
         dt=DecisionTree(self.max_depth, copy.deepcopy(game), self.heuristic, self.strategy, self.name)
         if self.adaptive:
