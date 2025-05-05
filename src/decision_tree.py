@@ -124,7 +124,6 @@ class DecisionTree:
         """
         Perform an alpha-beta search on the game state.
         """
-        # Check for cached result
         state_key = (str(game_state.board), depth, maximizing_player)
         if state_key in self.heuristic_cache:
             return self.heuristic_cache[state_key]
@@ -198,11 +197,11 @@ class DecisionTree:
         max_score = max(scores.values()) + epsilon
         normalized_scores = {k: v/max_score for k, v in scores.items()}
         
-        if game_progress < 0.3:  # Early game
+        if game_progress < 0.3: 
             weights = {"mobility": 0.7, "piece_count": 0.2, "isolation": 0.1}
-        elif game_progress < 0.7:  # Mid game
+        elif game_progress < 0.7:
             weights = {"mobility": 0.4, "piece_count": 0.4, "isolation": 0.2}
-        else:  # Lategame
+        else: 
             weights = {"mobility": 0.2, "piece_count": 0.3, "isolation": 0.5}
         
         weighted_scores = {
