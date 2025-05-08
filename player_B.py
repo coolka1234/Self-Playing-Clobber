@@ -1,5 +1,4 @@
 from multiprocessing.connection import Listener, Client
-from os import times_result
 import sys
 sys.path.append("src")
 from src.game import ClobberAgent
@@ -41,7 +40,6 @@ def play_and_listen(heuristic, strategy, max_depth, initial_game_state):
                 print(f"Time taken : {datetime.datetime.now()-times_start}")
                 break
             conn.send(move)
-            # print("Sent move:", move)
         except EOFError:
             print("Connection closed")
             break
@@ -50,8 +48,8 @@ def play_and_listen(heuristic, strategy, max_depth, initial_game_state):
             break
 
 if __name__ == "__main__":
-    rows = 7
-    cols = 11
+    rows = 8
+    cols = 8
     heuristic_W = mobility_score
     # alpha-beta or minmax
     strategy_A = 'minmax'

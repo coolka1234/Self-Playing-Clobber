@@ -185,7 +185,7 @@ class DecisionTree:
         
         total_pieces = game_state.get_num_of_pieces('W') + game_state.get_num_of_pieces('B')
         max_pieces = game_state.cols * game_state.rows
-        game_progress = 1 - (total_pieces / max_pieces)  # game progress from 0 to 1
+        game_progress = 1 - (total_pieces / max_pieces) 
         
         epsilon = 1e-10
         scores = {
