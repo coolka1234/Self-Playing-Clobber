@@ -1,7 +1,7 @@
 # Clobber – Program do gry w Clobber z użyciem Minimax i Alfa-Beta
 
 Opis:  
-Program implementuje grę Clobber na planszy o dowolnym rozmiarze (domyślnie 5x6). Obsługuje tryb gry z algorytmem Minimax oraz jego wersję z przycinaniem alfa-beta. Pozwala na wybór heurystyki i głębokości przeszukiwania. W wersji rozszerzonej umożliwia rozgrywkę między dwoma niezależnymi agentami.
+Program implementuje grę Clobber na planszy o dowolnym rozmiarze (domyślnie 8x8). Obsługuje tryb gry z algorytmem Minimax oraz jego wersję z przycinaniem alfa-beta. Pozwala na wybór heurystyki i głębokości przeszukiwania. W wersji rozszerzonej umożliwia rozgrywkę między dwoma niezależnymi agentami.
 
 Wejście:  
 
